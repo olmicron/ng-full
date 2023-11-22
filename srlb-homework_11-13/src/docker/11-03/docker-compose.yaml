@@ -1,0 +1,69 @@
+version: '3.7'
+
+services:
+
+  # Elasticsearch Docker Images: https://www.docker.elastic.co/
+  elasticsearch:
+    image: elasticsearch:${ELK_VERSION}
+    container_name: elasticsearch
+    environment:
+      - xpack.security.enabled=false
+      - discovery.type=single-node
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    cap_add:
+      - IPC_LOCK
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+      - 9300:9300
+
+  kibana:
+    container_name: kibana
+    image: kibana:${ELK_VERSION}
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    ports:
+      - 5601:5601
+    depends_on:
+      - elasticsearch
+
+  logstash:
+    container_name: logstash
+    image: logstash:${ELK_VERSION}
+    labels:
+      co.elastic.logs/module: logstash
+    user: root
+    volumes:
+      - "./logstash.conf:/usr/share/logstash/pipeline/logstash.conf:ro"
+      - ./nginx:/var/log/nginx
+    environment:
+      - xpack.monitoring.enabled=false
+      - ELASTIC_USER=elastic
+      #- ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+      - ELASTIC_HOSTS=https://elasticsearch:9200
+    depends_on:
+      - elasticsearch
+      - kibana
+
+  nginx:
+    container_name: nginx
+    image: nginx
+    volumes:
+     - ./templates:/etc/nginx/templates
+     - ./nginx:/var/log/nginx
+    ports:
+     - "8080:80"
+    environment:
+     - NGINX_HOST=foobar.com
+     - NGINX_PORT=80
+
+volumes:
+  elasticsearch-data:
+    driver: local

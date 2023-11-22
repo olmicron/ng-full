@@ -1,0 +1,54 @@
+---
+- name: "Установка и настройка Zabbix агента на Ubuntu 22.04"
+  hosts: local_ubuntu
+  become: true
+  become_method: sudo
+  gather_facts: true
+  vars:
+    tmp_zabbix_repository: /tmp/zabbix-release_repository.deb
+    zabbix_server_ip: 192.168.60.40
+  tasks:
+
+    - name: "Получаем package facts"
+      package_facts:
+        manager: auto
+
+    - block:
+      - name: "Загрузка конфига репозитория"
+        get_url:
+          url: https://repo.zabbix.com/zabbix/6.2/ubuntu/pool/main/z/zabbix-release/zabbix-release_6.2-4%2Bubuntu22.04_all.deb
+          dest: /tmp/zabbix-release_repository.deb
+
+      - name: "Установка репозитория (zabbix-release)"
+        apt:
+          deb: "{{ tmp_zabbix_repository }}"
+      when: "'zabbix-release' not in ansible_facts.packages"
+
+    - name: "Установка/обновление zabbix-agent"
+      apt:
+        update_cache: yes
+        name:
+          - zabbix-agent
+        state: latest
+
+    - name: "Указываем IP сервера zabbix"
+      ansible.builtin.lineinfile:
+        path: /etc/zabbix/zabbix_agentd.conf
+        create: false
+        regexp: '^Server=.*'
+        insertafter: '^# Server='
+        line: "Server=127.0.0.1,{{ zabbix_server_ip }}"
+
+    - name: "Включение автозапуска и рестарт zabbix-agent"
+      systemd:
+        enabled: true
+        state: restarted
+        name: zabbix-agent
+
+    - name: "Получаем service facts"
+      service_facts:
+
+    - name: "Проверяем, что zabbix-agent работает"
+      fail:
+        msg: "zabbix-agent не работает!"
+      when: ansible_facts.services['zabbix-agent']['state'] != "running"
