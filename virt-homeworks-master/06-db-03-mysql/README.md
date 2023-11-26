@@ -123,7 +123,7 @@ create user "test" identified
     with max_queries_per_hour 100
     password expire interval 180 day 
     failed_login_attempts 3
-    attribute '{"surname": "pretty", "name": "james"}';
+    attribute '{"name": "James", "surname": "Pretty"}';
 Query OK, 0 rows affected (0.01 sec)
 
 grant select on test_db.* to test;
@@ -133,7 +133,7 @@ select * from INFORMATION_SCHEMA.USER_ATTRIBUTES where user = "test";
 +------+------+----------------------------------------+
 | USER | HOST | ATTRIBUTE                              |
 +------+------+----------------------------------------+
-| test | %    | {"name": "james", "surname": "pretty"} |
+| test | %    | {"name": "James", "surname": "Pretty"} |
 +------+------+----------------------------------------+
 1 row in set (0.01 sec)
 ```
