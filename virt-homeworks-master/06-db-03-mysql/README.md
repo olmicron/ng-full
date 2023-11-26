@@ -201,7 +201,7 @@ mysql> SHOW PROFILES;
 
 #### Ответ
 
-В мойм случае файла `my.cnf` по указанному пути не оказалось. Пришлось воспользоваться поиском:
+В моём случае файла `my.cnf` по указанному пути не оказалось. Пришлось воспользоваться поиском:
 ```shell
 find / -name my.cnf
 find: '/proc/1/map_files': Permission denied
@@ -229,7 +229,7 @@ socket=/var/run/mysqld/mysqld.sock
 ```ini
 [mysqld]
 # Скорость IO важнее сохранности данных:
-innodb_flush_method = O_DIRECT
+innodb_flush_method = O_DSYNC
 # Нужна компрессия таблиц для экономии места на диске:
 innodb_file_per_table = 1
 # Размер буффера с незакомиченными транзакциями 1 Мб:
