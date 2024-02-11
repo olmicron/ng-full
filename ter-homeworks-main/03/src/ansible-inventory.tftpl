@@ -1,0 +1,17 @@
+[web-servers]
+%{~ for i in vm_web ~}
+
+${i["name"]} ansible_host=${i["network_interface"][0]["nat_ip_address"]}
+%{~ endfor ~}
+
+[db-servers]
+%{~ for i in vm_db ~}
+
+${i["name"]} ansible_host=${i["network_interface"][0]["nat_ip_address"]}
+%{~ endfor ~}
+
+[storage-servers]
+%{~ for i in vm_storage ~}
+
+${i["name"]} ansible_host=${i["network_interface"][0]["nat_ip_address"]}
+%{~ endfor ~}
