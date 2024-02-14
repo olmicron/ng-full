@@ -2,9 +2,8 @@
 # Создаем диски (3 HDD диска по 1 Гб каждый)
 resource "yandex_compute_disk" "default" {
   count = 3
-
   name  = "disk-${count.index+1}"
-  type  = "network-hdd"
+  type  = local.config.global.hdd_type
   zone  = yandex_vpc_subnet.ng_sub_2.zone
   size  = 1
 }
@@ -12,8 +11,8 @@ resource "yandex_compute_disk" "default" {
 
 # Создаем ВМ и подключаем туда созданные выше диски
 resource "yandex_compute_instance" "storage" {
-  name        = "storage"
-  platform_id = "standard-v1"
+  name        = local.config.vm.storage.name
+  platform_id = local.config.vm.storage.platform_id
   zone        = yandex_vpc_subnet.ng_sub_2.zone
 
   resources {
@@ -25,7 +24,7 @@ resource "yandex_compute_instance" "storage" {
   boot_disk {
     initialize_params {
       image_id = data.yandex_compute_image.ubuntu.image_id
-      type     = "network-hdd"
+      type     = local.config.global.hdd_type
       size     = 5
     }
   }

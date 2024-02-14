@@ -1,15 +1,15 @@
 
 # Создаем подсеть в сети выше
 resource "yandex_vpc_subnet" "ng_sub_2" {
-  name           = "ng-nat-sub-2"
-  zone           = "ru-central1-b"
+  name           = "${local.config.nat.sub_name}-2"
+  zone           = local.config.nat.sub_zone
   network_id     = yandex_vpc_network.ng_nat.id
   v4_cidr_blocks = ["10.0.2.0/24"]
 }
 
 # Создаем Х одинаковых ВМ (в соответствии со списком)
 resource "yandex_compute_instance" "vm_db" {
-  for_each = var.list_vm_db
+  for_each = local.config.vm.db
 
   name        = each.value.vm_name
   platform_id = each.value.platform_id
@@ -42,6 +42,10 @@ resource "yandex_compute_instance" "vm_db" {
 
   allow_stopping_for_update = false
 }
+
+
+
+
 
 # Список ВМ с параметрами
 # Неопределенные данные (типо yandex_vpc_subnet и т.п.) нельзя использовать в переменных :(
