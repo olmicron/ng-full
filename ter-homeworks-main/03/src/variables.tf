@@ -30,3 +30,55 @@ variable "vpc_name" {
   default     = "develop"
   description = "VPC network&subnet name"
 }
+
+
+
+
+variable "hdd_type" {
+  type = string
+  default = "network-hdd"
+}
+variable "os_image" {
+  type = string
+  default = "ubuntu-2004-lts"
+}
+variable "zone" {
+  type = string
+  default = "ru-central1-b"
+}
+variable "nat" {
+  type = object({
+    name = string,
+    sub_name = string,
+    sub_zone = string,
+  })
+  default = {
+    name = "ng-nat"
+    sub_name = "ng-sub"
+    sub_zone = "ru-central1-b"
+  }
+}
+variable "vm_web" {
+  type = object({
+    count = number,
+    name = string,
+    platform_id = string,
+  })
+  default = {
+    count = 2
+    name = "web"
+    platform_id = "standard-v1"
+  }
+}
+variable "vm_storage" {
+  type = object({
+    count = number,
+    name = string,
+    platform_id = string,
+  })
+  default = {
+    count = 1
+    name = "storage"
+    platform_id = "standard-v1"
+  }
+}
