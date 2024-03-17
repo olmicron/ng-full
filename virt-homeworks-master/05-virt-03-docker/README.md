@@ -95,12 +95,10 @@ Hey, Netology
 
 Запустил контейнеры с использованием `sleep infinity`, иначе контейнеры сразу завершаются, командами:
 ```bash 
-docker run -d --name centos -v D:\DevOps\git_netology\netology-full\virt-homeworks-master\05-virt-03-docker\res/data:/data centos sleep infinity
-docker run -d --name debian -v D:\DevOps\git_netology\netology-full\virt-homeworks-master\05-virt-03-docker\res/data:/data debian sleep infinity
-
 docker run -d --name centos -v [absolute_path]/data:/data centos sleep infinity
 docker run -d --name debian -v [absolute_path]/data:/data debian sleep infinity
 ```
+
 _P.S. Вместо `[absolute_path]` указывал полный путь до директории `data` на хостовой машине._
 
 ```text
